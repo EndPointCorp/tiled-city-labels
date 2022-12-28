@@ -1,8 +1,11 @@
+import os
 import csv
-import sys
 import math
 
 from simple_http_server import request_map, server, PathValue, Headers
+
+PORT = int(os.environ['PORT']) if 'PORT' in os.environ else 48088
+DATA_PATH = os.environ['DATA_PATH'] if 'DATA_PATH' in os.environ else 'data/cities500.txt'
 
 def deg2num(lat_deg, lon_deg, zoom):
     lat_rad = math.radians(lat_deg)
@@ -285,7 +288,7 @@ def tile(cities):
         count = count + len(qnode.points) 
 
     CACHE.traverseDFS(max_z_visitor)
-    print('Maximum depth: {}, total count: {}'.format(z_max, count))
+    print('Maximum depth: {}, total count: {} \n'.format(z_max, count))
 
 @request_map('/{grid}/{z_raw}/{x_raw}/{y_raw}\.{format}')
 def serve_tms(
@@ -299,22 +302,20 @@ def serve_tms(
     y = int(y_raw)
     z = int(z_raw)
 
+    grid = grid if grid else 'geo'
+
     box = geoNum2Box(x, y, z)
+    if grid == 'mercator':
+        box = num2box(x, y, z)
 
     cities = CACHE.getBoxPoints(box, maxPoints = 4)
 
     return 200, Headers({"Access-Control-Allow-Origin": "*"}), {"features": cities}
 
 def main():
-    path = sys.argv[1] if len(sys.argv) > 1 else 'data/cities500.txt'
-
-    cities = readCities(path)
+    cities = readCities(DATA_PATH)
     tile(cities)
-
-    print(cities[0])
-
-    server.start(port = 48088)
-
+    server.start(port = PORT)
 
 if __name__ == '__main__':
     main()
