@@ -1,0 +1,13 @@
+html,body {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+
+body {
+    height: 100%;
+}
+
+#viewer {
+    height: 100%;
+    width: 100%;
+}
