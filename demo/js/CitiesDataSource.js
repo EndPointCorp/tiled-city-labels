@@ -181,7 +181,7 @@ export default function mixinCitiesDataSource(viewer) {
     }
 
     function queryData(x, y, level) {
-        return fetch(`http://lg-head:48088/geo/${level}/${x}/${y}.json`).then(resp => {
+        return fetch(`http://localhost:48088/geo/${level}/${x}/${y}.json`).then(resp => {
             return resp.json();
         });
     }
